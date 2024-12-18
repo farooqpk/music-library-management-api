@@ -3,17 +3,17 @@ import jwt from "jsonwebtoken";
 import { TOKEN_SECRET } from "../config";
 import { DecodedPayload } from "../types/common";
 
-export const verifyToken = async (
+export const validateToken = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const accessToken = req.headers.authorization;
 
-  if (!accessToken)
-    return res
-      .status(401)
-      .json({ success: false, message: "token is missing" });
+  if (!accessToken) {
+    res.status(401).json({ success: false, message: "token is missing" });
+    return;
+  }
 
   try {
     const tokenDecoded = jwt.verify(
@@ -22,9 +22,8 @@ export const verifyToken = async (
     ) as DecodedPayload;
 
     if (!tokenDecoded) {
-      return res
-        .status(401)
-        .json({ success: false, message: "token is invalid" });
+      res.status(401).json({ success: false, message: "token is invalid" });
+      return;
     }
 
     req.id = tokenDecoded.id;
@@ -32,7 +31,7 @@ export const verifyToken = async (
     req.role = tokenDecoded.role;
     next();
   } catch (err) {
-    return res.status(401).json({
+    res.status(401).json({
       status: "401",
       data: null,
       message: "Unauthorized access. Invalid token.",

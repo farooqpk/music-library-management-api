@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { z, ZodError } from "zod";
 
-export function validateData(
+export function validateSchema(
   schema: z.ZodObject<any, any>,
   type: "body" | "query" | "params"
 ) {
