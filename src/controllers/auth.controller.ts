@@ -21,12 +21,13 @@ export const signupController = async (
     });
 
     if (is_email_already_exist) {
-      return res.status(409).json({
+      res.status(409).json({
         status: 409,
         data: null,
         message: "Email already exists.",
         error: null,
       });
+      return;
     }
 
     const hashed_password = await bcrypt.hash(password, 10);
@@ -53,14 +54,14 @@ export const signupController = async (
       });
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       status: 201,
       data: null,
       message: "User created successfully.",
       error: null,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       status: 500,
       data: null,
       message: "Something went wrong.",
@@ -88,28 +89,30 @@ export const loginController = async (
     });
 
     if (!user) {
-      return res.status(404).json({
+      res.status(404).json({
         status: 404,
         data: null,
         message: "User not found.",
         error: null,
       });
+      return;
     }
 
     const is_password_correct = await bcrypt.compare(password, user.password);
 
     if (!is_password_correct) {
-      return res.status(401).json({
+      res.status(401).json({
         status: 401,
         data: null,
         message: "Invalid email or password.",
         error: null,
       });
+      return;
     }
 
     const token = createJwtToken(user.id, user.email, user.role);
 
-    return res.status(200).json({
+    res.status(200).json({
       status: 200,
       data: {
         token,
@@ -118,7 +121,7 @@ export const loginController = async (
       error: null,
     });
   } catch (error) {
-    return res.status(500).json({
+    res.status(500).json({
       status: 500,
       data: null,
       message: "Something went wrong.",
@@ -128,7 +131,7 @@ export const loginController = async (
 };
 
 export const logoutController = async (req: Request, res: Response) => {
-  return res.status(200).json({
+  res.status(200).json({
     status: 200,
     data: null,
     message: "User logged out successfully.",

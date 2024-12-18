@@ -21,8 +21,10 @@ router.use("/albums", albumRoutes);
 router.use("/tracks", trackRoutes);
 router.use("/favorites", favoriteRoutes);
 
-router.post("/signup", validateSchema(authSchema, "body"), signupController);
-router.post("/login", validateSchema(authSchema, "body"), loginController);
 router.get("/logout", validateToken, logoutController);
+
+router.post("/signup", validateSchema(authSchema, "body"), signupController);
+
+router.post("/login", validateSchema(authSchema, "body"), loginController);
 
 export default router;

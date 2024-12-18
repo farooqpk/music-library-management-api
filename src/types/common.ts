@@ -1,7 +1,7 @@
-import { UserRole } from "@prisma/client";
-
 export type DecodedPayload = {
   id: string;
   email: string;
-  role: UserRole;
+  role: USER_ROLE;
 };
+
+export type USER_ROLE = "ADMIN" | "EDITOR" | "VIEWER";
