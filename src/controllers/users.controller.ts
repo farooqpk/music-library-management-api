@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { AddUserSchemaType, GetUsersSchemaType } from "../schemas/users.schema";
+import {
+  AddUserSchemaType,
+  DeleteUserSchemaType,
+  GetUsersSchemaType,
+  UpdatePasswordSchemaType,
+} from "../schemas/users.schema";
 import { prisma } from "../lib/prisma";
 import { UserRole } from "@prisma/client";
 import bcrypt from "bcrypt";
@@ -13,9 +18,22 @@ export const getUsersController = async (
   const role = req.query.role;
 
   try {
+    const admin_organization_id = (
+      await prisma.user.findFirst({
+        where: {
+          role: "ADMIN",
+          id: req.id,
+        },
+        select: {
+          organizationId: true,
+        },
+      })
+    )?.organizationId;
+
     const users = await prisma.user.findMany({
       where: {
         ...(role && { role: role as Exclude<UserRole, "ADMIN"> }),
+        organizationId: admin_organization_id,
       },
       take: limit,
       skip: offset,
@@ -111,6 +129,132 @@ export const addUserController = async (
       message: "User created successfully.",
       error: null,
     });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      data: null,
+      message: "Something went wrong.",
+      error: error,
+    });
+  }
+};
+
+export const deleteUserController = async (
+  req: Request<DeleteUserSchemaType>,
+  res: Response
+) => {
+  const { id } = req.params;
+
+  try {
+    const is_user_exist = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!is_user_exist) {
+      res.status(404).json({
+        status: 404,
+        data: null,
+        message: "User not found.",
+        error: null,
+      });
+      return;
+    }
+
+    const admin_organization_id = (
+      await prisma.user.findFirst({
+        where: {
+          role: "ADMIN",
+          id: req.id,
+        },
+        select: {
+          organizationId: true,
+        },
+      })
+    )?.organizationId;
+
+    await prisma.user.delete({
+      where: {
+        id,
+        role: {
+          in: ["EDITOR", "VIEWER"],
+        },
+        organizationId: admin_organization_id,
+      },
+    });
+
+    res.status(200).json({
+      status: 200,
+      data: null,
+      message: "User deleted successfully.",
+      error: null,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      data: null,
+      message: "Something went wrong.",
+      error: error,
+    });
+  }
+};
+
+export const updatePasswordController = async (
+  req: Request<{}, {}, UpdatePasswordSchemaType>,
+  res: Response
+) => {
+  const { old_password, new_password } = req.body;
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.id,
+      },
+      select: {
+        password: true,
+      },
+    });
+
+    if (!user) {
+      res.status(404).json({
+        status: 404,
+        data: null,
+        message: "User not found.",
+        error: null,
+      });
+      return;
+    }
+
+    const is_password_correct = await bcrypt.compare(
+      old_password,
+      user.password
+    );
+
+    if (!is_password_correct) {
+      res.status(401).json({
+        status: 401,
+        data: null,
+        message: "Invalid old password.",
+        error: null,
+      });
+      return;
+    }
+
+    const hashed_password = await bcrypt.hash(new_password, 10);
+
+    await prisma.user.update({
+      where: {
+        id: req.id,
+      },
+      data: {
+        password: hashed_password,
+      },
+    });
+
+    res.sendStatus(204);
   } catch (error) {
     res.status(500).json({
       status: 500,

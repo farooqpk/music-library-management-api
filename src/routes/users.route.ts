@@ -2,9 +2,15 @@ import { Router } from "express";
 import { validateToken } from "../middlewares/validateToken";
 import { validateRole } from "../middlewares/validateRole";
 import { validateSchema } from "../middlewares/validateSchema";
-import { addUserSchema, getUsersSchema } from "../schemas/users.schema";
+import {
+  addUserSchema,
+  deleteUserSchema,
+  getUsersSchema,
+  updatePasswordSchema,
+} from "../schemas/users.schema";
 import {
   addUserController,
+  deleteUserController,
   getUsersController,
 } from "../controllers/users.controller";
 
@@ -24,6 +30,19 @@ router.post(
   validateRole(["ADMIN"]),
   validateSchema(addUserSchema, "body"),
   addUserController
+);
+
+router.delete(
+  "/:id",
+  validateRole(["ADMIN"]),
+  validateSchema(deleteUserSchema, "params"),
+  deleteUserController
+);
+
+router.put(
+  "/update-password",
+  validateSchema(updatePasswordSchema, "body"),
+  deleteUserController
 );
 
 export default router;

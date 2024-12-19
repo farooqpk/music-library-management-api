@@ -12,5 +12,16 @@ export const addUserSchema = z.object({
   role: z.enum(["EDITOR", "VIEWER"]),
 });
 
+export const deleteUserSchema = z.object({
+  id: z.string().uuid(),
+});
+
+export const updatePasswordSchema = z.object({
+  old_password: z.string().min(8),
+  new_password: z.string().min(8),
+});
+
 export type GetUsersSchemaType = z.infer<typeof getUsersSchema>;
 export type AddUserSchemaType = z.infer<typeof addUserSchema>;
+export type DeleteUserSchemaType = z.infer<typeof deleteUserSchema>;
+export type UpdatePasswordSchemaType = z.infer<typeof updatePasswordSchema>;
