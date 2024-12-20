@@ -5,6 +5,7 @@ import { PORT } from "./config";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import routes from "./routes";
+import { connectToRedis } from "./lib/redis";
 dotenv.config();
 
 const app = express();
@@ -23,5 +24,5 @@ app.use("/api/v1", routes);
 
 app.listen(PORT, async () => {
   console.log(`Server listening on port ${PORT}`);
-  await connectPrisma();
+  await Promise.all([connectPrisma(), connectToRedis()]);
 });

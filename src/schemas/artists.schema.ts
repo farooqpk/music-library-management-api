@@ -9,7 +9,7 @@ export const getArtistsSchema = z.object({
       message: "Grammy filter must be either 0 or 10",
     })
     .optional(),
-  hidden: z.boolean().optional(),
+  hidden: z.coerce.boolean().optional(),
 });
 
 export const addArtistSchema = z.object({

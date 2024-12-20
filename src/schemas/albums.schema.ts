@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 export const getAlbumsSchema = z.object({
-  limit: z.number().default(5).describe("Number of records to fetch"),
-  offset: z.number().default(0).describe("Number of records to skip"),
-  artist_id: z.string().describe("Filter albums by artist ID"),
-  hidden: z.boolean().describe("Filter albums by visibility status"),
+  limit: z.coerce.number().default(5).optional(),
+  offset: z.coerce.number().default(0).optional(),
+  artist_id: z.string().optional(),
+  hidden: z.coerce.boolean().optional(),
 });
 
 export const addAlbumSchema = z.object({
@@ -18,7 +18,7 @@ export const updateAlbumSchema = z.object({
   name: z.string().describe("Name of the album"),
   year: z.number().describe("Release year of the album"),
   hidden: z.boolean().describe("Visibility status of the album"),
-})
+});
 
 export type GetAlbumsSchemaType = z.infer<typeof getAlbumsSchema>;
 export type AddAlbumSchemaType = z.infer<typeof addAlbumSchema>;

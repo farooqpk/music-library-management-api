@@ -5,7 +5,7 @@ export const getTracksSchema = z.object({
   offset: z.coerce.number().default(0).optional(),
   artist_id: z.string().optional(),
   album_id: z.string().optional(),
-  hidden: z.boolean().optional(),
+  hidden: z.coerce.boolean().optional(),
 });
 
 export const addTrackSchema = z.object({

@@ -3,6 +3,8 @@ import { AuthSchemaType } from "../schemas/auth.schema";
 import { prisma } from "../lib/prisma";
 import bcrypt from "bcrypt";
 import { createJwtToken } from "../utils/createToken";
+import { redisClient } from "../lib/redis";
+import { APP_NAME } from "../config";
 
 export const signupController = async (
   req: Request<{}, {}, AuthSchemaType>,
@@ -131,6 +133,20 @@ export const loginController = async (
 };
 
 export const logoutController = async (req: Request, res: Response) => {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    res.status(401).json({
+      status: 401,
+      data: null,
+      message: "Unauthorized.",
+      error: null,
+    });
+    return;
+  }
+
+  await redisClient.set(`${APP_NAME}:blacklist:${token}`, "true");
+
   res.status(200).json({
     status: 200,
     data: null,

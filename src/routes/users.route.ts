@@ -12,6 +12,7 @@ import {
   addUserController,
   deleteUserController,
   getUsersController,
+  updatePasswordController,
 } from "../controllers/users.controller";
 
 const router = Router();
@@ -42,7 +43,7 @@ router.delete(
 router.put(
   "/update-password",
   validateSchema(updatePasswordSchema, "body"),
-  deleteUserController
+  updatePasswordController
 );
 
 export default router;

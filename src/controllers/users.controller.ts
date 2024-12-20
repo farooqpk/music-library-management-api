@@ -34,6 +34,9 @@ export const getUsersController = async (
       where: {
         ...(role && { role: role as Exclude<UserRole, "ADMIN"> }),
         organizationId: admin_organization_id,
+        id: {
+          not: req.id,
+        },
       },
       take: limit,
       skip: offset,
@@ -118,7 +121,7 @@ export const addUserController = async (
       data: {
         email,
         password: hashed_password,
-        role,
+        role: role as Exclude<UserRole, "ADMIN">,
         organizationId: admin_organization_id,
       },
     });
@@ -208,6 +211,7 @@ export const updatePasswordController = async (
   res: Response
 ) => {
   const { old_password, new_password } = req.body;
+
   try {
     const user = await prisma.user.findUnique({
       where: {
