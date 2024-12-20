@@ -37,6 +37,7 @@ model Artist {
   grammy Int     @default(0)
   hidden Boolean @default(false)
   albums Album[]
+  tracks Track[]
 
   @@map("artists")
 }
@@ -48,6 +49,7 @@ model Album {
   hidden   Boolean @default(false)
   artistId String  @db.Uuid
   artist   Artist  @relation(fields: [artistId], references: [id])
+  tracks   Track[]
 
   @@map("albums")
 }
@@ -57,6 +59,10 @@ model Track {
   name     String  @db.VarChar(255)
   duration Int
   hidden   Boolean @default(false)
+  albumId  String  @db.Uuid
+  album    Album   @relation(fields: [albumId], references: [id])
+  artistId String  @db.Uuid
+  artist   Artist  @relation(fields: [artistId], references: [id])
 
   @@map("tracks")
 }

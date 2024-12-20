@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import {
   AddArtistSchemaType,
-  GetArtistSchemaType,
   GetArtistsSchemaType,
   IdSchemaType,
   UpdateArtistSchemaType,
@@ -50,7 +49,7 @@ export const getArtistsController = async (
 };
 
 export const getArtistController = async (
-  req: Request<GetArtistSchemaType>,
+  req: Request<IdSchemaType>,
   res: Response
 ) => {
   const { id } = req.params;

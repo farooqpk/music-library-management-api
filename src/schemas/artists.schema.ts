@@ -12,10 +12,6 @@ export const getArtistsSchema = z.object({
   hidden: z.boolean().optional(),
 });
 
-export const getArtistSchema = z.object({
-  id: z.string().uuid(),
-});
-
 export const addArtistSchema = z.object({
   name: z.string(),
   grammy: z.number(),
@@ -33,7 +29,6 @@ export const updateArtistSchema = z.object({
 });
 
 export type GetArtistsSchemaType = z.infer<typeof getArtistsSchema>;
-export type GetArtistSchemaType = z.infer<typeof getArtistSchema>;
 export type AddArtistSchemaType = z.infer<typeof addArtistSchema>;
 export type UpdateArtistSchemaType = z.infer<typeof updateArtistSchema>;
 export type IdSchemaType = z.infer<typeof idSchema>;

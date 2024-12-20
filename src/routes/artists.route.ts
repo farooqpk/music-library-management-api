@@ -3,7 +3,6 @@ import { validateToken } from "../middlewares/validateToken";
 import { validateSchema } from "../middlewares/validateSchema";
 import {
   addArtistSchema,
-  getArtistSchema,
   getArtistsSchema,
   idSchema,
   updateArtistSchema,
@@ -29,7 +28,7 @@ router.get(
 
 router.get(
   "/:id",
-  validateSchema(getArtistSchema, "params"),
+  validateSchema(idSchema, "params"),
   getArtistController
 );
 
