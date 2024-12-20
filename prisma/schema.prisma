@@ -27,49 +27,70 @@ model User {
   createdAt      DateTime     @default(now())
   organizationId String       @db.Uuid
   Organization   Organization @relation("OrganizationUsers", fields: [organizationId], references: [id])
+  Favorite       Favorite[]
 
   @@map("users")
 }
 
 model Artist {
-  id     String  @id @default(uuid()) @db.Uuid
-  name   String  @db.VarChar(255)
-  grammy Int     @default(0)
-  hidden Boolean @default(false)
-  albums Album[]
-  tracks Track[]
+  id       String     @id @default(uuid()) @db.Uuid
+  name     String     @db.VarChar(255)
+  grammy   Int        @default(0)
+  hidden   Boolean    @default(false)
+  albums   Album[]
+  tracks   Track[]
+  Favorite Favorite[]
 
   @@map("artists")
 }
 
 model Album {
-  id       String  @id @default(uuid()) @db.Uuid
-  name     String  @db.VarChar(255)
+  id       String     @id @default(uuid()) @db.Uuid
+  name     String     @db.VarChar(255)
   year     Int
-  hidden   Boolean @default(false)
-  artistId String  @db.Uuid
-  artist   Artist  @relation(fields: [artistId], references: [id])
+  hidden   Boolean    @default(false)
+  artistId String     @db.Uuid
+  artist   Artist     @relation(fields: [artistId], references: [id])
   tracks   Track[]
+  Favorite Favorite[]
 
   @@map("albums")
 }
 
 model Track {
-  id       String  @id @default(uuid()) @db.Uuid
-  name     String  @db.VarChar(255)
+  id       String     @id @default(uuid()) @db.Uuid
+  name     String     @db.VarChar(255)
   duration Int
-  hidden   Boolean @default(false)
-  albumId  String  @db.Uuid
-  album    Album   @relation(fields: [albumId], references: [id])
-  artistId String  @db.Uuid
-  artist   Artist  @relation(fields: [artistId], references: [id])
+  hidden   Boolean    @default(false)
+  albumId  String     @db.Uuid
+  album    Album      @relation(fields: [albumId], references: [id])
+  artistId String     @db.Uuid
+  artist   Artist     @relation(fields: [artistId], references: [id])
+  Favorite Favorite[]
 
   @@map("tracks")
 }
 
-model Favorite {
-  id String @id @default(uuid()) @db.Uuid
+enum FavoriteCategory {
+  ARTIST
+  ALBUM
+  TRACK
+}
 
+model Favorite {
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @db.Uuid
+  artistId  String?          @db.Uuid
+  albumId   String?          @db.Uuid
+  trackId   String?          @db.Uuid
+  category  FavoriteCategory
+  user      User             @relation(fields: [userId], references: [id])
+  artist    Artist?          @relation(fields: [artistId], references: [id])
+  album     Album?           @relation(fields: [albumId], references: [id])
+  track     Track?           @relation(fields: [trackId], references: [id])
+  createdAt DateTime         @default(now())
+
+  @@unique([userId, artistId, albumId, trackId])
   @@map("favorites")
 }
 

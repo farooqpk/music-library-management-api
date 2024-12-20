@@ -8,6 +8,7 @@ import {
 } from "../schemas/tracks.schema";
 import {
   addTrackController,
+  deleteTrackController,
   getTrackController,
   getTracksController,
   updateTrackController,
@@ -41,7 +42,8 @@ router.put(
 router.delete(
   "/:id",
   validateRole(["ADMIN", "EDITOR"]),
-  validateSchema(idSchema, "params")
+  validateSchema(idSchema, "params"),
+  deleteTrackController
 );
 
 export default router;
