@@ -36,15 +36,18 @@ model Artist {
   name   String  @db.VarChar(255)
   grammy Int     @default(0)
   hidden Boolean @default(false)
+  albums Album[]
 
   @@map("artists")
 }
 
 model Album {
-  id     String  @id @default(uuid()) @db.Uuid
-  name   String  @db.VarChar(255)
-  year   Int
-  hidden Boolean @default(false)
+  id       String  @id @default(uuid()) @db.Uuid
+  name     String  @db.VarChar(255)
+  year     Int
+  hidden   Boolean @default(false)
+  artistId String  @db.Uuid
+  artist   Artist  @relation(fields: [artistId], references: [id])
 
   @@map("albums")
 }
@@ -65,10 +68,10 @@ model Favorite {
 }
 
 model Organization {
-  id    String @id @default(uuid()) @db.Uuid
-  name  String @db.VarChar(255)
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(255)
   createdAt DateTime @default(now())
-  users User[] @relation("OrganizationUsers")
+  users     User[]   @relation("OrganizationUsers")
 
   @@map("organizations")
 }
